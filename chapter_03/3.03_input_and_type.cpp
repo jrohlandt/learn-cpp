@@ -1,5 +1,15 @@
 #include "../std_lib_facilities.h"
 
+// --------------------------
+// Some commonly used types:
+// --------------------------
+// int
+// double (floating point number)
+// char (a single character like 'a' or '@')
+// string (a sequence of characters in double quotes e.g. '123' or '123abc')
+// bool (true or false)
+// --------------------------
+
 int main() 
 {
     cout << "usage:  yourname age e.g. 36.8 (then press ENTER):\n";
