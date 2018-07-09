@@ -4,12 +4,12 @@
 
 int main()
 {
-    int val1;
-    int val2;
-    int smaller;
-    int larger;
+    double val1;
+    double val2;
+    double smaller;
+    double larger;
     bool equal = false;
-    int difference = 0;
+    double difference = 0;
     int sum;
     double ratio1;
     double ratio2;
@@ -31,8 +31,8 @@ int main()
     }
 
     difference = equal == true ? 0 : larger - smaller;
-    ratio1 = (double)val1 / (double)sum * 100;
-    ratio2 = (double)val2 / (double)sum * 100;
+    ratio1 = val1 / sum * 100;
+    ratio2 = val2 / sum * 100;
 
     cout << "You entered " << val1 << " and " << val2 << ".\n";
     cout << "Here is some information about the 2 numbers.\n";
