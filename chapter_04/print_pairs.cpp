@@ -3,7 +3,7 @@
 int main()
 {
 
-    // e.g. 1 2 3 4 5 6 | (3 pairs)
+    // e.g. 1 2 5 6 2.10 2.11 5 5 | (3 pairs)
 
     double val1;
     double val2;
