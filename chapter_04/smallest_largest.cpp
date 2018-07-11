@@ -21,8 +21,8 @@ int main()
         cout << val1 << unit << "\n";
 
         unit_is_valid = false;
-            for (int i = 0; i < valid_units.size(); i++) {
-                if (unit == valid_units[i]) 
+            for (string u : valid_units) {
+                if (unit == u) 
                     unit_is_valid = true;
             }
 
@@ -65,8 +65,8 @@ int main()
 
     sort(distances);
     cout << "\nDistances from low to high\n";
-    for (int i = 0; i < distances.size(); i++) {
-        cout << "\t" << distances[i] << "m\n";
+    for (double dist : distances) {
+        cout << "\t" << dist << "m\n";
     }
 
     cout << "\n The shortest distance is " << smallest << " and the longest distance is " << largest << ".\n";
