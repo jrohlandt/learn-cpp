@@ -80,11 +80,24 @@ Token Token_stream::get()
     switch (ch) {
     case ';':    // for "print"
     case 'q':    // for "quit"
-    case '(': case ')': case '+': case '-': case '*': case '/': 
+    case '(': 
+    case ')': 
+    case '+': 
+    case '-': 
+    case '*': 
+    case '/': 
         return Token(ch);        // let each character represent itself
     case '.':
-    case '0': case '1': case '2': case '3': case '4':
-    case '5': case '6': case '7': case '8': case '9':
+    case '0': 
+    case '1': 
+    case '2': 
+    case '3': 
+    case '4':
+    case '5': 
+    case '6': 
+    case '7': 
+    case '8': 
+    case '9':
         {    
             cin.putback(ch);         // put digit back into the input stream
             double val;
@@ -95,6 +108,27 @@ Token Token_stream::get()
         error("Bad token");
     }
 }
+
+/*
+    Grammar
+    -------
+
+    Expression:
+        Term
+        Expression "+" Term
+        Expression "-" Term
+    Term:
+        Primary
+        Term "*" Primary
+        Term "/" Primary
+        Term "%" Primary
+    Primary:
+        Number
+        "(" Expression ")"
+    Number:
+        floating-point-literal
+
+*/ 
 
 //------------------------------------------------------------------------------
 
@@ -191,9 +225,8 @@ int main()
             Token t = ts.get();
 
             // 'q' for quit
-            if (t.kind == 'q') {
+            if (t.kind == 'q')
                 break; 
-            }
 
             // ';' for "print now"
             if (t.kind == ';') {
