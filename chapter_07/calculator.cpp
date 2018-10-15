@@ -200,31 +200,34 @@ double expression()
 
 int main() 
 {
-    double val = 0;
-    try {
+    try 
+    {
         while (cin) {
+
+            cout << "> ";
             Token t = ts.get();
-
-            // 'q' for quit
-            if (t.kind == 'q')
-                break; 
-
-            // ';' for "print now"
-            if (t.kind == ';') {
-                cout << "=" << val << '\n'; 
-            } else {
-                // now that we know the Token is not 'q' or ';' we put it 
-                // back in ts buffer so that expression() can read it.
-                ts.putback(t);                
+            
+            while (t.kind == ';') {
+                t = ts.get(); // eat ';'
             }
-
-            val = expression();
+            
+            if (t.kind == 'q') {
+                keep_window_open();
+                return 0;
+            }
+            
+            // now that we know the Token is not 'q' or ';' we put it 
+            // back in ts buffer so that expression() can read it.
+            ts.putback(t);  
+            cout << " = " << expression() << "\n";
         }
+
 	    keep_window_open();
+        return 0;
     }
     catch (exception& e) {
-        cerr << "error: " << e.what() << '\n'; 
-        keep_window_open();
+        cerr << e.what() << '\n'; 
+        keep_window_open("~~");
         return 1;
     }
     catch (...) {
