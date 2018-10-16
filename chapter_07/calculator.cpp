@@ -67,6 +67,7 @@ Token Token_stream::get()
     case '-': 
     case '*': 
     case '/': 
+    case '%':
         return Token(ch);        // let each character represent itself
     case '.':
     case '0': 
@@ -137,6 +138,10 @@ double primary()
             }
         case '8':            // we use '8' to represent a number
             return t.value;  // return the number's value
+        case '-':
+            return primary();
+        case '+':
+            return primary(); // todo 2-2 = 4 after adding the - and + case to primary, need to fix. 
         default:
             error("primary expected");
     }
@@ -161,6 +166,16 @@ double term()
                     double d = primary();
                     if (d == 0) error("divide by zero");
                     left /= d; 
+                    t = ts.get();
+                    break;
+                }
+            case '%':
+                {
+                    double d = primary();
+                    if (d == 0)
+                        error("%: divide by zero");
+
+                    left = fmod(left, d);
                     t = ts.get();
                     break;
                 }
