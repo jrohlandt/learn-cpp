@@ -1,7 +1,5 @@
 #include "../std_lib_facilities.h"
 
-//------------------------------------------------------------------------------
-
 class Token {
     public:
         char kind;        // what kind of token
@@ -11,8 +9,6 @@ class Token {
         Token(char ch, double val)     // make a Token from a char and a double
             :kind(ch), value(val) { }
 };
-
-//------------------------------------------------------------------------------
 
 class Token_stream {
     public: 
@@ -24,15 +20,11 @@ class Token_stream {
         Token buffer;     // here is where we keep a Token put back using putback()
 };
 
-//------------------------------------------------------------------------------
-
 // The constructor just sets full to indicate that the buffer is empty:
 Token_stream::Token_stream()
 :full(false), buffer(0)    // no Token in buffer
 {
 }
-
-//------------------------------------------------------------------------------
 
 // The putback() member function puts its argument back into the Token_stream's buffer:
 void Token_stream::putback(Token t)
@@ -44,8 +36,6 @@ void Token_stream::putback(Token t)
     buffer = t;       // copy t to buffer
     full = true;      // buffer is now full
 }
-
-//------------------------------------------------------------------------------
 
 Token Token_stream::get()
 {
@@ -112,15 +102,9 @@ Token Token_stream::get()
 
 */ 
 
-//------------------------------------------------------------------------------
-
 Token_stream ts;        // provides get() and putback() 
 
-//------------------------------------------------------------------------------
-
 double expression();    // declaration so that primary() can call expression()
-
-//------------------------------------------------------------------------------
 
 // deal with numbers and parentheses
 double primary()
@@ -146,8 +130,6 @@ double primary()
             error("primary expected");
     }
 }
-
-//------------------------------------------------------------------------------
 
 // deal with *, /, and %
 double term()
@@ -186,8 +168,6 @@ double term()
     }
 }
 
-//------------------------------------------------------------------------------
-
 // deal with + and -
 double expression()
 {
@@ -210,8 +190,6 @@ double expression()
         }
     }
 }
-
-//------------------------------------------------------------------------------
 
 int main() 
 {
@@ -251,6 +229,3 @@ int main()
         return 2;
     }
 }
-
-
-//------------------------------------------------------------------------------
