@@ -1,5 +1,9 @@
 #include "../std_lib_facilities.h"
 
+const char number = '8'; // The value 8 represents a kind of number.
+const char quit = 'q';
+const char print = ';';
+
 class Token {
     public:
         char kind;        // what kind of token
@@ -49,8 +53,8 @@ Token Token_stream::get()
     cin >> ch;    // note that >> skips whitespace (space, newline, tab, etc.)
 
     switch (ch) {
-    case ';':    // for "print"
-    case 'q':    // for "quit"
+    case print:    // for "print"
+    case quit:    // for "quit"
     case '(': 
     case ')': 
     case '+': 
@@ -74,7 +78,7 @@ Token Token_stream::get()
             cin.putback(ch);         // put digit back into the input stream
             double val;
             cin >> val;              // read a floating-point number
-            return Token('8',val);   // let '8' represent "a number"
+            return Token{number, val}; 
         }
     default:
         error("Bad token");
@@ -120,7 +124,7 @@ double primary()
                 }
                 return d;
             }
-        case '8':            // we use '8' to represent a number
+        case number:            // we use '8' to represent a number
             return t.value;  // return the number's value
         case '-':
             return primary();
@@ -200,11 +204,11 @@ int main()
             cout << "> ";
             Token t = ts.get();
             
-            while (t.kind == ';') {
+            while (t.kind == print) {
                 t = ts.get(); // eat ';'
             }
             
-            if (t.kind == 'q') {
+            if (t.kind == quit) {
                 keep_window_open();
                 return 0;
             }
