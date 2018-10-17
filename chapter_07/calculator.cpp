@@ -1,3 +1,39 @@
+/*
+    This is a simple calculator.
+
+    The grammar for input is:
+
+    Statement:
+        Expression
+        Print
+        Quit
+
+    Print: 
+        ;
+
+    Quit:
+        q
+
+    Expression:
+        Term
+        Expression + Term
+        Expression - Term
+    Term:
+        Primary
+        Term * Primary
+        Term / Primary
+        Term % Primary
+    Primary:
+        Number
+        ( Expression )
+        - Primary
+        + Primary
+    Number:
+        floating-point-literal
+
+    Input comes from cin through the Token_stream called ts.
+*/ 
+
 #include "../std_lib_facilities.h"
 
 const char number = '8'; // The value 8 represents a kind of number.
@@ -19,6 +55,7 @@ class Token_stream {
         Token_stream();   // make a Token_stream that reads from cin
         Token get();      // get a Token (get() is defined elsewhere)
         void putback(Token t);    // put a Token back
+        void ignore(char c); // discard all characters up to and including c.
     private:
         bool full;        // is there a Token in the buffer?
         Token buffer;     // here is where we keep a Token put back using putback()
@@ -43,14 +80,14 @@ void Token_stream::putback(Token t)
 
 Token Token_stream::get()
 {
-    if (full) {       // do we already have a Token ready?
-        // remove token from buffer
+    // Check if buffer already has a token?
+    if (full) {       
         full = false;
         return buffer;
     } 
 
     char ch;
-    cin >> ch;    // note that >> skips whitespace (space, newline, tab, etc.)
+    cin >> ch;    // >> skips whitespace (space, newline, tab, etc.)
 
     switch (ch) {
     case print:    // for "print"
@@ -62,18 +99,10 @@ Token Token_stream::get()
     case '*': 
     case '/': 
     case '%':
-        return Token(ch);        // let each character represent itself
-    case '.':
-    case '0': 
-    case '1': 
-    case '2': 
-    case '3': 
-    case '4':
-    case '5': 
-    case '6': 
-    case '7': 
-    case '8': 
-    case '9':
+        return Token{ch};        // let each character represent itself
+    case '.': 
+    case '0': case '1': case '2': case '3': case '4':
+    case '5': case '6': case '7': case '8': case '9':
         {    
             cin.putback(ch);         // put digit back into the input stream
             double val;
@@ -85,26 +114,22 @@ Token Token_stream::get()
     }
 }
 
-/*
-    Grammar
-    -------
+void Token_stream::ignore(char c)
+{
+    // First look in buffer.
+    if (full && c == buffer.kind) {
+        full = false;
+        return;
+    }
 
-    Expression:
-        Term
-        Expression "+" Term
-        Expression "-" Term
-    Term:
-        Primary
-        Term "*" Primary
-        Term "/" Primary
-        Term "%" Primary
-    Primary:
-        Number
-        "(" Expression ")"
-    Number:
-        floating-point-literal
+    full = false;
 
-*/ 
+    // Now search input:
+    char ch = 0;
+    while (cin >> ch) 
+        if (ch == c) 
+            return;
+}
 
 Token_stream ts;        // provides get() and putback() 
 
@@ -195,30 +220,40 @@ double expression()
     }
 }
 
+void clean_up_mess()
+{
+    ts.ignore(print);
+}
+
+void calculate()
+{
+    while (cin)
+    try {
+        cout << "> ";
+        Token t = ts.get();
+        
+        while (t.kind == print)
+            t = ts.get(); // eat ';'
+        
+        if (t.kind == quit)
+            return;
+        
+        // now that we know the Token is not 'q' or ';' we put it 
+        // back in ts buffer so that expression() can read it.
+        ts.putback(t);  
+        cout << " = " << expression() << "\n";
+    }
+    catch (exception& e) {
+        cerr << e.what() << '\n';
+        clean_up_mess();
+    }
+}
+
 int main() 
 {
     try 
     {
-        while (cin) {
-
-            cout << "> ";
-            Token t = ts.get();
-            
-            while (t.kind == print) {
-                t = ts.get(); // eat ';'
-            }
-            
-            if (t.kind == quit) {
-                keep_window_open();
-                return 0;
-            }
-            
-            // now that we know the Token is not 'q' or ';' we put it 
-            // back in ts buffer so that expression() can read it.
-            ts.putback(t);  
-            cout << " = " << expression() << "\n";
-        }
-
+        calculate();
 	    keep_window_open();
         return 0;
     }
