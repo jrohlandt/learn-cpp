@@ -3,11 +3,21 @@
 
     The grammar for input is:
 
+    Calculation:
+        Statement
+        Print
+        Quit
+        Calculation Statement
+
     Statement:
+        Declaration
         Expression
         Print
         Quit
 
+    Declaration:
+        "let" Name = "=" Expression
+        
     Print: 
         ;
 
@@ -129,6 +139,36 @@ void Token_stream::ignore(char c)
     while (cin >> ch) 
         if (ch == c) 
             return;
+}
+
+class Variable {
+    public: 
+        string name;
+        double value;
+};
+
+vector<Variable> var_table;
+
+double get_value(string s)
+{
+    for (const Variable& v : var_table) {
+        if (v.name == s)
+            return v.value;
+    }
+
+    error("get: undefined variable ", s);
+}
+
+void set_value(string s, double d)
+{
+    for (Variable& v : var_table) {
+        if (v.name == s) {
+            v.value = d;
+            return;
+        }
+    }
+
+    error("set: undefined variable ", s);
 }
 
 Token_stream ts;        // provides get() and putback() 
