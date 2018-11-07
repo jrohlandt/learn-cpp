@@ -100,27 +100,27 @@ Token Token_stream::get()
     cin >> ch;    // >> skips whitespace (space, newline, tab, etc.)
 
     switch (ch) {
-    case print:    // for "print"
-    case quit:    // for "quit"
-    case '(': 
-    case ')': 
-    case '+': 
-    case '-': 
-    case '*': 
-    case '/': 
-    case '%':
-        return Token{ch};        // let each character represent itself
-    case '.': 
-    case '0': case '1': case '2': case '3': case '4':
-    case '5': case '6': case '7': case '8': case '9':
-        {    
-            cin.putback(ch);         // put digit back into the input stream
-            double val;
-            cin >> val;              // read a floating-point number
-            return Token{number, val}; 
-        }
-    default:
-        error("Bad token");
+        case print:    // for "print"
+        case quit:    // for "quit"
+        case '(': 
+        case ')': 
+        case '+': 
+        case '-': 
+        case '*': 
+        case '/': 
+        case '%':
+            return Token{ch};        // let each character represent itself
+        case '.': 
+        case '0': case '1': case '2': case '3': case '4':
+        case '5': case '6': case '7': case '8': case '9':
+            {    
+                cin.putback(ch);         // put digit back into the input stream
+                double val;
+                cin >> val;              // read a floating-point number
+                return Token{number, val}; 
+            }
+        default:
+            error("Bad token");
     }
 }
 
@@ -159,6 +159,26 @@ double get_value(string s)
     error("get: undefined variable ", s);
 }
 
+// Check if variable is defined.
+bool is_declared(string var)
+{
+    for (const Variable& v : var_table) {
+        if (v.name == var)
+            return true;
+    }
+    return false;
+}
+
+// Add {var,val} to var_table.
+double define_name(string var, double val)
+{
+    if (is_declared(var))
+        error(var, "declared twice");
+
+    var_table.push_back(Variable{var,val});
+    return val;
+}
+
 void set_value(string s, double d)
 {
     for (Variable& v : var_table) {
@@ -169,6 +189,26 @@ void set_value(string s, double d)
     }
 
     error("set: undefined variable ", s);
+}
+
+double declaration()
+{
+    // assume we have see "let"
+    // handle name = expression
+    // declare a variable called "name" with the initial value "expression".
+
+    Token t = ts.get();
+    if (t.kind != name)
+        error("name expected in declaration");
+    string var_name = t.name;
+
+    Token t2 = ts.get();
+    if (t2.kind != '=') 
+        error("= missing in variable declaration of ", var_name);
+
+    double d = expression();
+    define_name(var_name, d);
+    return d;
 }
 
 Token_stream ts;        // provides get() and putback() 
@@ -265,6 +305,18 @@ void clean_up_mess()
     ts.ignore(print);
 }
 
+double statement()
+{
+    Token t = ts.get();
+    switch(t.kind) {
+        case let:
+            return declaration();
+        default:
+            ts.putback(t);
+            return expression();
+    }
+}
+
 void calculate()
 {
     while (cin)
@@ -281,7 +333,7 @@ void calculate()
         // now that we know the Token is not 'q' or ';' we put it 
         // back in ts buffer so that expression() can read it.
         ts.putback(t);  
-        cout << " = " << expression() << "\n";
+        cout << " = " << statement() << "\n";
     }
     catch (exception& e) {
         cerr << e.what() << '\n';
