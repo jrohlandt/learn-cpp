@@ -16,8 +16,11 @@
         Quit
 
     Declaration:
-        "let" Name = "=" Expression
+        "let" Name "=" Expression
         
+    Name:
+        e.g. abc or a1bc or Abc, ABC but not 1abc or ab_c or # or a bc
+
     Print: 
         ;
 
@@ -54,10 +57,18 @@ class Token {
     public:
         char kind;        // what kind of token
         double value;     // for numbers: a value 
-        Token(char ch)    // make a Token from a char
-            :kind(ch), value(0) { }    
-        Token(char ch, double val)     // make a Token from a char and a double
-            :kind(ch), value(val) { }
+        string name;      
+
+        // Token(char ch)    // make a Token from a char
+        //     :kind(ch), value(0) { }  
+
+        // Token(char ch, double val)     // make a Token from a char and a double
+        //     :kind(ch), value(val) { }
+
+        Token() :kind{0} { }
+        Token(char ch) :kind{ch} { }
+        Token(char ch, double val) :kind{ch}, value{val} {}
+        Token(char ch, string n) :kind{ch}, name{n} {}
 };
 
 class Token_stream {
@@ -88,6 +99,10 @@ void Token_stream::putback(Token t)
     full = true;      // buffer is now full
 }
 
+const char name = 'a'; // name token
+const char let = 'L'; // declaration token
+const string declKey = "let"; // declaration keyword
+
 Token Token_stream::get()
 {
     // Check if buffer already has a token?
@@ -109,6 +124,7 @@ Token Token_stream::get()
         case '*': 
         case '/': 
         case '%':
+        case '=': // Used for variable declaration only. E.g. let x = 3.4;
             return Token{ch};        // let each character represent itself
         case '.': 
         case '0': case '1': case '2': case '3': case '4':
@@ -120,6 +136,21 @@ Token Token_stream::get()
                 return Token{number, val}; 
             }
         default:
+            if (isalpha(ch)) {
+                // cin.putback(ch); // put back the character
+                string s;
+                s += ch;
+                while (cin.get(ch) && (isalpha(ch) || isdigit(ch))) {
+                    s += ch;
+                }
+                cin.putback(ch); // why?
+                
+                if (s == declKey) {
+                    return Token{let}; // return declaration keyword
+                } else {
+                    return Token{name,s};
+                }
+            }
             error("Bad token");
     }
 }
@@ -190,16 +221,19 @@ void set_value(string s, double d)
 
     error("set: undefined variable ", s);
 }
+Token_stream ts;        // provides get() and putback() 
+double expression();    // declaration so that primary() can call expression()
 
 double declaration()
 {
-    // assume we have see "let"
+    // assume we have seen "let"
     // handle name = expression
     // declare a variable called "name" with the initial value "expression".
 
     Token t = ts.get();
     if (t.kind != name)
         error("name expected in declaration");
+
     string var_name = t.name;
 
     Token t2 = ts.get();
@@ -210,10 +244,6 @@ double declaration()
     define_name(var_name, d);
     return d;
 }
-
-Token_stream ts;        // provides get() and putback() 
-
-double expression();    // declaration so that primary() can call expression()
 
 // deal with numbers and parentheses
 double primary()
@@ -231,6 +261,8 @@ double primary()
             }
         case number:            // we use '8' to represent a number
             return t.value;  // return the number's value
+        case name:
+            return get_value(t.name);
         case '-':
             return primary();
         case '+':
@@ -345,6 +377,9 @@ int main()
 {
     try 
     {
+        define_name("pi", 3.1415926535);
+        define_name("e", 2.7182818284);
+        
         calculate();
 	    keep_window_open();
         return 0;
