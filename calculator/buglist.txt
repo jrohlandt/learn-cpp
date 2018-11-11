@@ -1,0 +1,2 @@
+1. Negative numbers are treated as positive e.g. -1 + 2 = 3
+2. subtraction is treated like addition e.g. 2 - 2 = 4 (Fixed)

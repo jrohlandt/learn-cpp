@@ -226,22 +226,16 @@ double expression();    // declaration so that primary() can call expression()
 
 double declaration()
 {
-    // assume we have seen "let"
-    // handle name = expression
-    // declare a variable called "name" with the initial value "expression".
-
     Token t = ts.get();
     if (t.kind != name)
         error("name expected in declaration");
 
-    string var_name = t.name;
-
     Token t2 = ts.get();
     if (t2.kind != '=') 
-        error("= missing in variable declaration of ", var_name);
+        error("= missing in variable declaration of ", t.name);
 
     double d = expression();
-    define_name(var_name, d);
+    define_name(t.name, d);
     return d;
 }
 
@@ -266,7 +260,7 @@ double primary()
         case '-':
             return primary();
         case '+':
-            return primary(); // todo 2-2 = 4 after adding the - and + case to primary, need to fix. 
+            return primary(); 
         default:
             error("primary expected");
     }
@@ -322,7 +316,7 @@ double expression()
             t = ts.get();
             break;
         case '-':
-            left += term();    // evaluate Term and subtract
+            left -= term();    // evaluate Term and subtract
             t = ts.get();
             break;
         default: 
