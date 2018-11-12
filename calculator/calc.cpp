@@ -49,9 +49,14 @@
 
 #include "../std_lib_facilities.h"
 
+char prev_char = 's'; // first
 const char number = '8'; // The value 8 represents a kind of number.
 const char quit = 'q';
 const char print = ';';
+
+const char name = 'a'; // name token
+const char let = 'L'; // declaration token
+const string declKey = "let"; // declaration keyword
 
 class Token {
     public:
@@ -98,10 +103,6 @@ void Token_stream::putback(Token t)
     buffer = t;       // copy t to buffer
     full = true;      // buffer is now full
 }
-
-const char name = 'a'; // name token
-const char let = 'L'; // declaration token
-const string declKey = "let"; // declaration keyword
 
 Token Token_stream::get()
 {
@@ -254,11 +255,22 @@ double primary()
                 return d;
             }
         case number:            // we use '8' to represent a number
-            return t.value;  // return the number's value
+            {
+                if (prev_char == '-') {
+                    prev_char = 's';
+                    return t.value * -1;
+                }
+                return t.value;  // return the number's value
+            }
         case name:
             return get_value(t.name);
         case '-':
-            return primary();
+            {
+                if (prev_char == 's') {
+                    prev_char = '-';
+                }
+                return primary();   
+            }
         case '+':
             return primary(); 
         default:
