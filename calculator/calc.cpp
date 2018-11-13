@@ -58,6 +58,9 @@ const char name = 'a'; // name token
 const char let = 'L'; // declaration token
 const string declKey = "let"; // declaration keyword
 
+const char calc_func = 'f';
+const string calc_sqrt = "sqrt";
+
 class Token {
     public:
         char kind;        // what kind of token
@@ -148,6 +151,8 @@ Token Token_stream::get()
                 
                 if (s == declKey) {
                     return Token{let}; // return declaration keyword
+                } else if (s == calc_sqrt) {
+                    return Token{calc_func, s};
                 } else {
                     return Token{name,s};
                 }
@@ -253,6 +258,27 @@ double primary()
                     error("')' expected");
                 }
                 return d;
+            }
+        case calc_func:
+            {
+                if (t.name == calc_sqrt) {
+                    double d;
+                    t = ts.get();
+                    if (t.kind != '(') {
+                        error("sqrt expected '( '");
+                    }
+
+                    // d = expression();
+                    d = sqrt(expression());
+
+                    t = ts.get();
+                    if (t.kind != ')') {
+                        error("sqrt expected ') '");
+                    }
+                    return d;
+
+                }
+                break;
             }
         case number:            // we use '8' to represent a number
             {
