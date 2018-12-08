@@ -1,0 +1,1 @@
+c++ -o main main.cpp my.h my.cpp
