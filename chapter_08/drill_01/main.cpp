@@ -1,4 +1,6 @@
 #include "my.h"
+#include "../../Chrono/Chrono.h"
+
 
 int foo;
 
@@ -13,4 +15,8 @@ int main()
     swap_int(a,b);
     swap_r(a,b);
     swap_cr(a,b);
+
+    Chrono::Date d = Chrono::Date(1978, Chrono::Month::jun, 25);
+
+    std::cout << d;
 }

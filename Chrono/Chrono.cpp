@@ -73,7 +73,7 @@ namespace Chrono {
         return true;
     }
 
-    bool is_leap_year()
+    bool is_leap_year(int y)
     {
         // exercise 10
     }
