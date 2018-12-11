@@ -1,5 +1,10 @@
+#include <iostream>
 namespace Chrono {
 
+    enum class Day {
+        sunday, monday, tuesday, wednesday, thursday, friday, saturday
+    };
+    
     enum class Month {
         jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
     };
@@ -30,13 +35,13 @@ namespace Chrono {
 
     bool is_date(int y, Month m, int d);
 
-    bool leapyear(int y);
+    bool is_leap_year(int y);
 
     bool operator==(const Date& a, const Date& b);
     bool operator!=(const Date& a, const Date& b);
 
-    ostream& operator<<(ostream& os, const Date& d);
-    istream& operator>>(istream& is, Date& dd);
+    std::ostream& operator<<(std::ostream& os, const Date& d);
+    std::istream& operator>>(std::istream& is, Date& dd);
 
     Day day_of_week(const Date& d);
     Date next_Sunday(const Date d); 
