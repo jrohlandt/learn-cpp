@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+
 namespace Chrono {
 
     enum class Day {
@@ -20,6 +22,7 @@ namespace Chrono {
             int day() const { return d; }
             Month month() const { return m; }
             int year() const { return y; }
+
 
             // modifying operations:
             void add_day(int n);
