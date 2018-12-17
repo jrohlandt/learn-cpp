@@ -82,7 +82,28 @@ std::istream& operator>>(std::istream& i_stream, Reading& r)
     return i_stream;
 }
 
-std::istream& operator>>(std::istream i_stream, Month& m)
+bool is_valid(const Reading& r, int min_temp, int max_temp)
+{
+    if (r.day < 1 || r.day > 31)
+        return false;
+
+    if (r.hour < 0 || r.hour > 23)
+        return false;
+
+    if (r.temperature < min_temp || r.temperature > max_temp)
+        return false;
+
+    return true;
+}
+
+
+bool is_valid(const Reading& r)
+// rough test
+{
+    return is_valid(r, -200, 200);
+}
+
+std::istream& operator>>(std::istream& i_stream, Month& m)
 // read a month from input stream into m.
 // format: { month feb ... }
 {
@@ -127,26 +148,7 @@ std::istream& operator>>(std::istream i_stream, Month& m)
     return i_stream;
 }
 
-bool is_valid(const Reading& r, int min_temp, int max_temp)
-{
-    if (r.day < 1 || r.day > 31)
-        return false;
 
-    if (r.hour < 0 || r.hour > 23)
-        return false;
-
-    if (r.temperature < min_temp || r.temperature > max_temp)
-        return false;
-
-    return true;
-}
-
-
-bool is_valid(const Reading& r)
-// rough test
-{
-    return is_valid(r, -200, 200);
-}
 
 std::istream& operator>>(std::istream& i_stream, Year& y)
 // Read a year from input stream into y.
@@ -196,7 +198,14 @@ int main()
 
     ifs.exceptions(ifs.exceptions()|std::ios_base::badbit); // throw error for bad()
 
+    std::vector<Year> years;
+    while(true) {
+        Year y;
+        if (!(ifs >> y)) break;
+        years.push_back(y);
+    }
 
+    std::cout << "Read " << years.size() << " years of readings\n";
 
 }
 
