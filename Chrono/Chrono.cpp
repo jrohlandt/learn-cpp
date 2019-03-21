@@ -3,9 +3,31 @@
 namespace Chrono {
 
     Date::Date(int yy, Month mm, int dd)
-        : y{yy}, m{mm}, d{dd}
+        : y{yy}, m{mm}, d{dd}, hours{0}, minutes{0}, seconds{0}
     {
-        if (!is_date(yy,mm,dd)) throw Invalid{};
+        if (!is_date(yy,mm,dd, 0, 0, 0)) throw Invalid{};
+    }
+
+    Date::Date(int yy, Month mm, int dd, int hr, int min, int sec)
+        : y{yy}, m{mm}, d{dd}, hours{hr}, minutes{min}, seconds{sec}
+    {
+        if (!is_date(yy,mm,dd, hr, min, sec)) throw Invalid{};
+    }
+
+    // Create from string yyyy-mm-dd HH:MM:SS
+    Date::Date(std::string datetime)
+    {
+        y = std::stoi(datetime.substr(0,4));
+        m = Chrono::Month( std::stoi(datetime.substr(5,2)) );
+        d = std::stoi(datetime.substr(8,2));
+
+        hours = std::stoi(datetime.substr(11,2));
+        minutes = std::stoi(datetime.substr(14,2));
+        seconds = std::stoi(datetime.substr(17,2));
+
+        if (!is_date(y,m,d, hours, minutes, seconds)) {
+            throw Invalid{};
+        }
     }
 
     const Date& default_date()
@@ -18,8 +40,33 @@ namespace Chrono {
     Date::Date()
         :y{default_date().year()},
         m{default_date().month()},
-        d{default_date().day()}
+        d{default_date().day()},
+        hours{0},
+        minutes{0},
+        seconds{0}
     { 
+    }
+
+    std::string Date::datetimestring() const {
+        std::string dt = "";
+
+        std::string monthPadding = (int(m) < 10) ? "0" : "";
+        std::string dayPadding = (d < 10) ? "0" : "";
+
+        std::string hourPadding = (hours < 10) ? "0" : "";
+        std::string minutePadding = (minutes < 10) ? "0" : "";
+        std::string secondPadding = (seconds < 10) ? "0" : "";
+
+        dt += std::to_string(y) + "-" 
+            + monthPadding + std::to_string(int(m)) + "-"
+            + dayPadding + std::to_string(d)
+            + " "
+            + hourPadding + std::to_string(hours) + ":"
+            + minutePadding + std::to_string(minutes) + ":"
+            + secondPadding + std::to_string(seconds);
+
+
+        return dt;
     }
 
     void Date::add_day(int n)
@@ -47,7 +94,7 @@ namespace Chrono {
         y += n;
     }
 
-    bool is_date(int y, Month m, int d)
+    bool is_date(int y, Month m, int d, int hr, int min, int sec)
     {
         // assume year y is valid
 
@@ -69,6 +116,10 @@ namespace Chrono {
         }
 
         if (d > days_in_month) return false;
+
+        if (hr < 0 || hr > 23 || min < 0 || min > 59 || sec < 0 || sec > 59) {
+            return false;
+        }
 
         return true;
     }

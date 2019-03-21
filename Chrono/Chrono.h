@@ -16,12 +16,16 @@ namespace Chrono {
             class Invalid {};
 
             Date(int y, Month m, int d);
+            Date(int yy, Month mm, int dd, int hr, int min, int sec);
+            Date(std::string datetime);
             Date(); // default constructor
 
             // non modifying operations:
             int day() const { return d; }
             Month month() const { return m; }
             int year() const { return y; }
+
+            std::string datetimestring() const;
 
 
             // modifying operations:
@@ -34,9 +38,13 @@ namespace Chrono {
             Month m;
             int d;
 
+            int hours;
+            int minutes;
+            int seconds;
+
     };
 
-    bool is_date(int y, Month m, int d);
+    bool is_date(int y, Month m, int d, int hr, int min, int sec);
 
     bool is_leap_year(int y);
 
