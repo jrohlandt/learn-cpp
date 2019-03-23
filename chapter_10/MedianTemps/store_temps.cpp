@@ -2,12 +2,13 @@
 #include<fstream>
 #include<string>
 #include<vector>
+#include<algorithm>
 #include "../../Chrono/Chrono.h"
 
 struct Reading 
 {
     Chrono::Date datetime;
-    int temp;
+    float temp;
 };
 
 std::ostream& operator<<(std::ostream& os, Reading& r)
@@ -27,7 +28,7 @@ int main()
     while(true)
     {
         std::string date, time;
-        int temp;
+        float temp;
         ifs >> date >> time >> temp;
         if (!ifs) break;
 
@@ -42,5 +43,41 @@ int main()
     for (Reading r : readings) {
         std::cout << r << '\n';
     }
+
+    std::vector<float> sorted;
+    for (Reading r : readings) {
+        sorted.push_back(r.temp);
+    }
+
+    std::sort(sorted.begin(), sorted.end());
+    for (int i=0; i < sorted.size(); i++) {
+        std::cout << sorted[i] << '\n';
+    }
+
+    float median;
+    if (sorted.size() % 2 == 0) {
+        int middle = (sorted.size() / 2) - 1;
+        median = (sorted[middle] + sorted[middle + 1]) / 2;
+    } else {
+        int i = (sorted.size() + 1) / 2;
+        median = sorted[i - 1];
+    }
+
+    std::cout 
+        << "number of readings: " << sorted.size() << '\n'
+        << "Median: " << median << '\n';
+
+    float sum = 0;
+    for (float s : sorted) {
+        sum += s;
+    }
+
+    float mean = sum / sorted.size();
+
+    std::cout 
+        << "sum: " << sum << '\n'
+        << "Mean: " << mean << '\n';
+
+
 
 }
